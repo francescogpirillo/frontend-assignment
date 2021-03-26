@@ -133,9 +133,10 @@ const Pokemons = () => {
         <Search onSearch={onSearchHandler} pokemonTypes={data?.pokemonTypes} />
         <Grid item xs={12}>
           <PokemonList pokemonList={pokemonList} />
+        </Grid>
+        <Grid item xs={12}>
           {hasNextPage ? <Button onClick={() => { onSearchHandler(searchText, type, endCursor, true) }} color="primary" variant="contained">Show more</Button> : <></>}
         </Grid>
-
       </Grid>
     </Container>
   );
