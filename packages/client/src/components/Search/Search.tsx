@@ -39,7 +39,7 @@ const Search = (props: any) => {
                 </TextField>
             </Grid>
             <Grid item xs={12} sm={2}>
-                <Button onClick={() => { props.onSearch(searchText, type) }} color="primary" variant="contained">Cerca</Button>
+                <Button onClick={() => { props.onSearch(searchText, type) }} color="primary" variant="contained">Search</Button>
             </Grid>
         </Grid>
     )

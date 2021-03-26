@@ -8,7 +8,6 @@ import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 
 const PokemonList = (props: any) => {
-    console.log(props.pokemonList)
     return (
         <TableContainer component={Paper}>
             <Table aria-label="simple table">
