@@ -1,27 +1,9 @@
-.App {
+.app {
   text-align: center;
-
-  h1 {
-    text-align: center;
-    color: #275a74;
-  }
 
   .logo {
     text-align: center;
-    margin: 10px;
-    height: 80px;
-  }
-
-  .select {
-    width: 200px;
-  }
-
-  Button {
-    width: 100%;
-    background-color: #275a74;
-  }
-
-  Button:hover {
-    background-color: #c12400;
+    margin: 1em;
+    height: 90px;
   }
 }

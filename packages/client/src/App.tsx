@@ -1,14 +1,15 @@
-import React from 'react';
-import scss from './App.module.scss';
-import logo from '../src/assets/logo.png';
-import Pokemons from './containers/Pokemons/Pokemons';
+import React from "react";
+import scss from "./App.module.scss";
+import logo from "../src/assets/logo.png";
+import Pokemons from "./containers/Pokemons/Pokemons";
+import { Container } from "@material-ui/core";
 
 function App() {
   return (
-    <div className={scss.App}>
+    <Container className={scss.app}>
       <img className={scss.logo} src={logo} alt="logo" />
       <Pokemons />
-    </div>
+    </Container>
   );
 }
 

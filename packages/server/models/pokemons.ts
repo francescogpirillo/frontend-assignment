@@ -80,13 +80,12 @@ export function queryPokemonsByType(args: {
     data,
     filterByType,
     sliceByAfter,
-    // slicing limit + 1 because the `toConnection` function should known the connection size to determine if there are more results
     slice(0, limit + 1)
   );
   return toConnection(results, limit);
 }
 
-export function queryPokemonsByNameAndType(args: {
+export function queryPokemonsByFilters(args: {
   q?: string;
   type?: string;
   after?: string;
@@ -124,7 +123,6 @@ export function queryPokemonsByNameAndType(args: {
     filterByQ,
     filterByType,
     sliceByAfter,
-    // slicing limit + 1 because the `toConnection` function should known the connection size to determine if there are more results
     slice(0, limit + 1)
   );
   return toConnection(results, limit);

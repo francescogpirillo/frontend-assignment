@@ -16,32 +16,33 @@ const Search = (props: any) => {
     }
 
     return (
-        <Grid container direction="row" alignItems="flex-end" justify="center" spacing={3} item >
-            <Grid item xs={12} sm={2}>
-                <TextField id="standard-basic" label="Name" value={searchText} onChange={onChangeSearchTextHandler} />
+        < div className={scss.search} >
+            <div className={scss.filters}>
+                <Grid container>
+                    <Grid item xs={12}>
+                        <TextField className={scss.searchText} id="standard-basic" label="Name" value={searchText} onChange={onChangeSearchTextHandler} />
+                        <TextField className={scss.select}
+                            select
+                            title="Type"
+                            label="Type"
+                            name="Type"
+                            value={type}
+                            onChange={onChangeTypeHandler}>
+                            {props?.pokemonTypes?.map(
+                                (item: any, index: number) => (<MenuItem key={index}
+                                    value={item}>{item}</MenuItem>)
+                            )}
+                        </TextField>
+                    </Grid>
+                </Grid>
+            </div>
+            <Grid className={scss.buttonContainer} container spacing={1}>
+                <Grid item xs={12}>
+                    <Button className={scss.button} onClick={() => { props.onSearch(searchText, type) }} variant="contained">Search</Button>
+                </Grid>
             </Grid>
-            <Grid item xs={12} sm={2}>
-
-                <TextField className={scss.select}
-                    id="standard-select-currency"
-                    select
-                    title="Type"
-                    label="Type"
-                    name="Type"
-                    value={type}
-                    onChange={onChangeTypeHandler}
-                    {...props}
-                >
-                    {props?.pokemonTypes?.map(
-                        (item: any, index: number) => (<MenuItem key={index}
-                            value={item}>{item}</MenuItem>)
-                    )}
-                </TextField>
-            </Grid>
-            <Grid item xs={12} sm={2}>
-                <Button onClick={() => { props.onSearch(searchText, type) }} color="primary" variant="contained">Search</Button>
-            </Grid>
-        </Grid>
+        </div >
+        // </Grid>
     )
 }
 

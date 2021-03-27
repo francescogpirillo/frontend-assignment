@@ -5,7 +5,7 @@ export const resolvers: IResolvers = {
   Query: {
     pokemons: (_source, args) => pokemons.query(args),
     pokemonsByType: (_source, args) => pokemons.queryPokemonsByType(args),
-    pokemonsByNameAndType: (_source, args) => pokemons.queryPokemonsByNameAndType(args),
+    pokemonsByFilters: (_source, args) => pokemons.queryPokemonsByFilters(args),
     pokemonTypes: (_source) => pokemons.pokemonTypes()
   }
 };

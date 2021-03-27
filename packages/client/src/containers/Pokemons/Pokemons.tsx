@@ -1,145 +1,155 @@
-import React, { useState } from 'react';
-import PokemonList from '../../components/PokemonList/PokemonList';
-import { Grid, Container, Button } from '@material-ui/core';
-import Search from '../../components/Search/Search';
-import { gql, useQuery } from '@apollo/client';
-import client from '../../apolloClient/apolloClient';
+import React, { useEffect, useState } from "react";
+import PokemonList from "../../components/PokemonList/PokemonList";
+import ShowMore from "../../components/ShowMore/ShowMore";
+import { Grid, CircularProgress, Snackbar } from "@material-ui/core";
+import Search from "../../components/Search/Search";
+import pokemonService from "../../apolloClient/pokemons/pokemons";
+import { Pokemon } from '../../models/Pokemon'
+import { PokemonEdge } from "../../apolloClient/pokemons/models/pokemonsResponse";
+import { Alert } from '@material-ui/lab';
 
 const Pokemons = () => {
+  const [pokemonList, setPokemonList] = useState<Pokemon[]>([]);
+  const [hasNextPage, setHasNextPage] = useState<boolean>(false);
+  const [endCursor, setEndCursor] = useState<string>('');
+  const [name, setName] = useState<string>('');
+  const [type, setType] = useState<string>('');
+  const [loadingResults, setLoadingResults] = useState<boolean>(false);
+  const [pokemonTypes, setPokemonTypes] = useState<string[]>([]);
+  const [openAlert, setOpenAlert] = useState<boolean>(false);
 
-  const [pokemonList, setPokemonList] = useState([]);
-  const [hasNextPage, setHasNextPage] = useState(false);
-  const [endCursor, setEndCursor] = useState('');
-  const [searchText, setSearchText] = useState('');
-  const [type, setType] = useState('');
 
-
-  const { loading, error, data } = useQuery(gql`
-        query Query {
-            pokemonTypes
+  const fetchPokemons = async (name: string = '', showMore: boolean = false) => {
+    try {
+      if (!showMore) setLoadingResults(true);
+      const response = await pokemonService.pokemonsByName(name);
+      if (response.data) {
+        const pokemons: Pokemon[] = response.data.pokemons?.edges?.map((pokemon: PokemonEdge) => {
+          const name = pokemon?.node?.name ?? '';
+          const types = pokemon?.node?.types?.join() ?? '';
+          const classification = pokemon?.node?.classification ?? '';
+          return new Pokemon(name, types, classification);
+        });
+        showMore ? setPokemonList(pokemonList.concat(pokemons)) : setPokemonList(pokemons);
+        setHasNextPage(response.data.pokemons?.pageInfo?.hasNextPage);
+        setEndCursor(response.data.pokemons?.pageInfo?.endCursor);
       }
-    `);
+    } catch (err) {
+      setOpenAlert(true);
+    } finally {
+      setLoadingResults(false);
+    };
+  };
 
-  const onSearchHandler = (searchText: string, type: string, after = '', more = false) => {
-    setSearchText(searchText);
-    setType(type);
-    if (!type || type === '') {
-      client.query({
-        query: gql`
-        query Query($pokemonsQ: String, $pokemonsAfter: ID, $pokemonsLimit: Int) {
-          pokemons(q: $pokemonsQ, after: $pokemonsAfter, limit: $pokemonsLimit) {
-            edges {
-              cursor
-              node {
-                id
-                name
-                classification
-                types
-              }
-            }
-            pageInfo {
-              endCursor
-              hasNextPage
-            }
-          }
-        }
-    `, variables: { pokemonsQ: searchText, pokemonsAfter: after }, fetchPolicy: "no-cache"
-      }).then(data => {
-        const pokemons = data.data.pokemons.edges.map((pokemon: any) => {
-          return {
-            name: pokemon?.node?.name,
-            types: pokemon?.node?.types?.join(),
-            classification: pokemon?.node?.classification
-          }
-        })
-        more ? setPokemonList(pokemonList.concat(pokemons)) : setPokemonList(pokemons);
-        setHasNextPage(data.data.pokemons.pageInfo.hasNextPage);
-        setEndCursor(data.data.pokemons.pageInfo.endCursor);
-      });
+  const fetchPokemonsByType = async (type: string, after: string = "", showMore: boolean = false,) => {
+    try {
+      if (!showMore) setLoadingResults(true);
+      const response = await pokemonService.pokemonsByType(type, after);
+      if (response.data) {
+        const pokemons = response.data.pokemonsByType?.edges?.map((pokemon: PokemonEdge) => {
+          const name = pokemon?.node?.name ?? '';
+          const types = pokemon?.node?.types?.join() ?? '';
+          const classification = pokemon?.node?.classification ?? '';
+          return new Pokemon(name, types, classification);
+        });
+        showMore ? setPokemonList(pokemonList.concat(pokemons)) : setPokemonList(pokemons);
+        setHasNextPage(response.data.pokemonsByType?.pageInfo?.hasNextPage);
+        setEndCursor(response.data.pokemonsByType?.pageInfo?.endCursor);
+      }
+    } catch (err) {
+      setOpenAlert(true);
+    } finally {
+      setLoadingResults(false);
+    };
+  };
 
-    } else if ((type && type !== '') && (!searchText || searchText === '')) {
-      client.query({
-        query: gql`
-        query Query($pokemonsByTypeType: String!, $pokemonsByTypeAfter: ID, $pokemonsByTypeLimit: Int) {
-          pokemonsByType(type: $pokemonsByTypeType, after: $pokemonsByTypeAfter, limit: $pokemonsByTypeLimit) {
-            edges {
-              cursor
-              node {
-                id
-                name
-                classification
-                types
-              }
-            }
-            pageInfo {
-              endCursor
-              hasNextPage
-            }
-          }
-        }
-    `, variables: { pokemonsByTypeType: type, pokemonsByTypeAfter: after }, fetchPolicy: "no-cache"
-      }).then(data => {
-        const pokemons = data.data?.pokemonsByType?.edges?.map((pokemon: any) => {
-          return {
-            name: pokemon?.node?.name,
-            types: pokemon?.node?.types?.join(),
-            classification: pokemon?.node?.classification
-          }
-        })
-        more ? setPokemonList(pokemonList.concat(pokemons)) : setPokemonList(pokemons);
-        setHasNextPage(data.data.pokemonsByType.pageInfo.hasNextPage);
-        setEndCursor(data.data.pokemonsByType.pageInfo.endCursor);
-      });
+  const fetchPokemonsByFilters = async (type: string, name: string, after: string = '', showMore: boolean = false) => {
+    try {
+      setLoadingResults(true);
+      const response = await pokemonService.pokemonsByFilters(type, name, after);
+      if (response.data) {
+        const pokemons = response.data.pokemonsByFilters?.edges?.map((pokemon: PokemonEdge) => {
+          const name: string = pokemon?.node?.name ?? '';
+          const types: string = pokemon?.node?.types?.join() ?? '';
+          const classification: string = pokemon?.node?.classification ?? '';
+          return new Pokemon(name, types, classification);
+        });
+        showMore ? setPokemonList(pokemonList.concat(pokemons)) : setPokemonList(pokemons); setHasNextPage(response.data.pokemonsByFilters?.pageInfo?.hasNextPage);
+        setEndCursor(response.data.pokemonsByFilters?.pageInfo?.endCursor);
+      }
+    } catch (err) {
+      setOpenAlert(true);
+    } finally {
+      setLoadingResults(false);
+    };
+  };
 
-    } else if ((type && type !== '') && (searchText && searchText !== '')) {
-      client.query({
-        query: gql`
-        query Query($pokemonsByNameAndTypeType: String!, $pokemonsByNameAndTypeQ: String, $pokemonsByNameAndTypeAfter: ID, $pokemonsByNameAndTypeLimit: Int) {
-          pokemonsByNameAndType(type: $pokemonsByNameAndTypeType, q: $pokemonsByNameAndTypeQ, after: $pokemonsByNameAndTypeAfter, limit: $pokemonsByNameAndTypeLimit) {
-            edges {
-              cursor
-              node {
-                id
-                name
-                classification
-                types
-              }
-            }
-            pageInfo {
-              endCursor
-              hasNextPage
-            }
-          }
-        }
-    `, variables: { pokemonsByNameAndTypeQ: searchText, pokemonsByNameAndTypeType: type, pokemonsByNameAndTypeAfter: after }, fetchPolicy: "no-cache"
-      }).then(data => {
-        const pokemons = data.data.pokemonsByNameAndType.edges.map((pokemon: any) => {
-          return {
-            name: pokemon?.node?.name,
-            types: pokemon?.node?.types?.join(),
-            classification: pokemon?.node?.classification
-          }
-        })
-        more ? setPokemonList(pokemonList.concat(pokemons)) : setPokemonList(pokemons);
-        setHasNextPage(data.data.pokemonsByNameAndType.pageInfo.hasNextPage);
-        setEndCursor(data.data.pokemonsByNameAndType.pageInfo.endCursor);
-      });
+
+  useEffect(() => {
+    fetchPokemons();
+  }, [])
+
+  useEffect(() => {
+    pokemonService.pokemonTypes().then((data: any) => {
+      setPokemonTypes(data?.data?.pokemonTypes);
+    })
+  }, [])
+
+  const onSearchHandler = (
+    name: string,
+    type: string,
+    after: string = "",
+    showMore: boolean = false
+  ) => {
+
+    if (!showMore) {
+      setName(name);
+      setType(type);
     }
+
+    if (!type || type === "") {
+      fetchPokemons(name, showMore);
+    } else if (type && type !== "" && (!name || name === "")) {
+      fetchPokemonsByType(type, after, showMore);
+    } else if (type && type !== "" && name && name !== "") {
+      fetchPokemonsByFilters(type, name, after, showMore);
+    }
+  };
+
+  const onShowMoreHandler = () => {
+    onSearchHandler(name, type, endCursor, true);
   }
 
+  const closeAlertHandler = () => {
+    setOpenAlert(false);
+  };
+
+  const errorAlert = (
+    <Snackbar open={openAlert} autoHideDuration={6000} onClose={closeAlertHandler}>
+      <Alert onClose={closeAlertHandler} severity="error">
+        An unexpected error occurred. Please try again later
+        </Alert>
+    </Snackbar>
+  )
+
   return (
-    <Container>
-      <Grid container alignItems="center" justify="center" spacing={2}>
-        <Search onSearch={onSearchHandler} pokemonTypes={data?.pokemonTypes} />
-        <Grid item xs={12}>
-          <PokemonList pokemonList={pokemonList} />
+    <>
+      {errorAlert}
+      <Grid container alignItems="flex-start" justify="flex-start" spacing={2}>
+        <Grid container item xs={12} md={3}>
+          <Search onSearch={onSearchHandler} pokemonTypes={pokemonTypes} />
         </Grid>
-        <Grid item xs={12}>
-          {hasNextPage ? <Button onClick={() => { onSearchHandler(searchText, type, endCursor, true) }} color="primary" variant="contained">Show more</Button> : <></>}
+        <Grid item xs={12} md={9}>
+          <Grid item>
+            {loadingResults ? <CircularProgress /> : <PokemonList pokemonList={pokemonList} />}
+            {!loadingResults && hasNextPage ? (
+              <ShowMore showMoreClicked={onShowMoreHandler} />
+            ) : <></>}
+          </Grid>
         </Grid>
       </Grid>
-    </Container>
+    </>
   );
-}
+};
 
 export default Pokemons;
