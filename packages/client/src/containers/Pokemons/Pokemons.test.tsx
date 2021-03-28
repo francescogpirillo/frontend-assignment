@@ -7,7 +7,7 @@ import PokemonList from '../../components/PokemonList/PokemonList';
 
 configure({ adapter: new Adapter() });
 
-describe('<App />', () => {
+describe('<Pokemons />', () => {
     let wrapper: ShallowWrapper;
     beforeEach(() => {
         wrapper = shallow(<Pokemons />);

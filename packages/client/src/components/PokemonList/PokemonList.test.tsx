@@ -8,10 +8,10 @@ import TableRow from '@material-ui/core/TableRow';
 
 configure({ adapter: new Adapter() });
 
-describe('<App />', () => {
+describe('<PokemonList />', () => {
     let wrapper: ShallowWrapper;
     beforeEach(() => {
-        wrapper = shallow(<PokemonList pokemonList={[]} />);
+        wrapper = shallow(<PokemonList fetchAll={() => { }} pokemonList={[]} />);
     })
 
     it('should render one TableContainer', () => {

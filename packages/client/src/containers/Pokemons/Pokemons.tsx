@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import PokemonList from "../../components/PokemonList/PokemonList";
 import ShowMore from "../../components/ShowMore/ShowMore";
+import Scroll from "../../components/Scroll/Scroll";
 import { Grid, CircularProgress, Snackbar } from "@material-ui/core";
 import Search from "../../components/Search/Search";
 import pokemonService from "../../apolloClient/pokemons/pokemons";
@@ -19,10 +20,10 @@ const Pokemons = () => {
   const [pokemonTypes, setPokemonTypes] = useState<string[]>([]);
   const [openAlert, setOpenAlert] = useState<boolean>(false);
 
-  const fetchPokemons = async (name: string = '', showMore: boolean = false) => {
+  const fetchPokemons = async (name: string = '', after: string = '', showMore: boolean = false) => {
     try {
       if (!showMore) setLoadingResults(true);
-      const response = await pokemonService.pokemonsByName(name);
+      const response = await pokemonService.pokemonsByName(name, after);
       if (response.data) {
         const pokemons: Pokemon[] = response.data.pokemons?.edges?.map((pokemon: PokemonEdge) => {
           const id = pokemon.node?.id ?? nanoid();
@@ -98,8 +99,8 @@ const Pokemons = () => {
   }, [])
 
   const onSearchHandler = (
-    name: string,
-    type: string,
+    name: string = '',
+    type: string = '',
     after: string = '',
     showMore: boolean = false
   ) => {
@@ -110,7 +111,7 @@ const Pokemons = () => {
     }
 
     if (!type || type === '') {
-      fetchPokemons(name, showMore);
+      fetchPokemons(name, after, showMore);
     } else if (type && type !== '' && (!name || name === '')) {
       fetchPokemonsByType(type, after, showMore);
     } else if (type && type !== '' && name && name !== '') {
@@ -137,6 +138,7 @@ const Pokemons = () => {
   return (
     <>
       {errorAlert}
+      <Scroll showBelow={250} />
       <Grid container item xs={12} md={3}>
         <Search onSearch={onSearchHandler} pokemonTypes={pokemonTypes} />
       </Grid>
@@ -144,7 +146,7 @@ const Pokemons = () => {
         <Grid item>
           {loadingResults ?
             <CircularProgress />
-            : <PokemonList pokemonList={pokemonList} />}
+            : <PokemonList fetchAll={onSearchHandler} pokemonList={pokemonList} />}
           {!loadingResults && hasNextPage ?
             <ShowMore showMoreClicked={onShowMoreHandler} />
             : <></>}

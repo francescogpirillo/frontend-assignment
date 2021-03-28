@@ -1,4 +1,12 @@
 .showMore {
   text-align: center;
   margin: 16px;
+  .button {
+    background-color: #397ba6;
+    color: #fff;
+    &:hover {
+      background-color: #397ba6;
+      color: #fff;
+    }
+  }
 }

@@ -6,7 +6,7 @@ import { Button, TextField } from '@material-ui/core';
 
 configure({ adapter: new Adapter() });
 
-describe('<App />', () => {
+describe('<Search />', () => {
     let wrapper: ShallowWrapper;
     beforeEach(() => {
         wrapper = shallow(<Search pokemonTypes={[]} onSearch={() => { }} />);

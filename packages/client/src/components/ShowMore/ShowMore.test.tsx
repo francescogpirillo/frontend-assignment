@@ -6,7 +6,7 @@ import { Button } from '@material-ui/core';
 
 configure({ adapter: new Adapter() });
 
-describe('<App />', () => {
+describe('<ShowMore />', () => {
     let wrapper: ShallowWrapper;
     beforeEach(() => {
         wrapper = shallow(<ShowMore showMoreClicked={() => { }} />);
