@@ -7,6 +7,7 @@ import pokemonService from "../../apolloClient/pokemons/pokemons";
 import { Pokemon } from '../../shared/models/Pokemon'
 import { PokemonEdge } from "../../apolloClient/pokemons/models/pokemonsResponse";
 import { Alert } from '@material-ui/lab';
+import { nanoid } from "nanoid";
 
 const Pokemons = () => {
   const [pokemonList, setPokemonList] = useState<Pokemon[]>([]);
@@ -24,10 +25,11 @@ const Pokemons = () => {
       const response = await pokemonService.pokemonsByName(name);
       if (response.data) {
         const pokemons: Pokemon[] = response.data.pokemons?.edges?.map((pokemon: PokemonEdge) => {
+          const id = pokemon.node?.id ?? nanoid();
           const name = pokemon.node?.name ?? '';
           const types = pokemon.node?.types?.join() ?? '';
           const classification = pokemon?.node?.classification ?? '';
-          return new Pokemon(name, types, classification);
+          return new Pokemon(id, name, types, classification);
         });
         showMore ? setPokemonList(pokemonList.concat(pokemons)) : setPokemonList(pokemons);
         setHasNextPage(response.data.pokemons?.pageInfo?.hasNextPage);
@@ -46,10 +48,11 @@ const Pokemons = () => {
       const response = await pokemonService.pokemonsByType(type, after);
       if (response.data) {
         const pokemons = response.data.pokemonsByType?.edges?.map((pokemon: PokemonEdge) => {
+          const id = pokemon.node?.id ?? nanoid();
           const name = pokemon.node?.name ?? '';
           const types = pokemon.node?.types?.join() ?? '';
           const classification = pokemon.node?.classification ?? '';
-          return new Pokemon(name, types, classification);
+          return new Pokemon(id, name, types, classification);
         });
         showMore ? setPokemonList(pokemonList.concat(pokemons)) : setPokemonList(pokemons);
         setHasNextPage(response.data.pokemonsByType?.pageInfo?.hasNextPage);
@@ -68,10 +71,11 @@ const Pokemons = () => {
       const response = await pokemonService.pokemonsByFilters(type, name, after);
       if (response.data) {
         const pokemons = response.data.pokemonsByFilters?.edges?.map((pokemon: PokemonEdge) => {
+          const id = pokemon.node?.id ?? nanoid();
           const name: string = pokemon.node?.name ?? '';
           const types: string = pokemon.node?.types?.join() ?? '';
           const classification: string = pokemon?.node?.classification ?? '';
-          return new Pokemon(name, types, classification);
+          return new Pokemon(id, name, types, classification);
         });
         showMore ? setPokemonList(pokemonList.concat(pokemons)) : setPokemonList(pokemons); setHasNextPage(response.data.pokemonsByFilters?.pageInfo?.hasNextPage);
         setEndCursor(response.data.pokemonsByFilters?.pageInfo?.endCursor);

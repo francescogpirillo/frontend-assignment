@@ -23,7 +23,7 @@ const PokemonList = ({ pokemonList }: PokemonListProps) => {
                 </TableHead>
                 <TableBody>
                     {pokemonList && pokemonList.map((row: Pokemon) => (
-                        <TableRow key={row.name}>
+                        <TableRow key={row.id}>
                             <TableCell align="center" component="th" scope="row">{row.name}</TableCell>
                             <TableCell align="center">{row.types}</TableCell>
                             <TableCell align="center">{row.classification}</TableCell>
