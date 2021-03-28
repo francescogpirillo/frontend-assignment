@@ -1,33 +1,40 @@
 export interface PokemonsByNameResponse {
-    pokemons: PokemonsConnection
+    pokemons: PokemonsConnection;
 }
 
 export interface PokemonsByTypeResponse {
-    pokemonsByType: PokemonsConnection
+    pokemonsByType: PokemonsConnection;
 }
 
-export interface PokemonsByFilters {
-    pokemonsByFilters: PokemonsConnection
+export interface PokemonsByFiltersResponse {
+    pokemonsByFilters: PokemonsConnection;
 }
-
+export interface PokemonTypesResponse {
+    pokemonTypes: string[];
+}
 export interface PageInfo {
-    endCursor: string
-    hasNextPage: boolean
+    endCursor: string;
+    hasNextPage: boolean;
 }
 
 export interface Pokemon {
-    id: string
-    name: string
-    classification: string
-    types: [String]
+    id: string;
+    name: string;
+    classification: string;
+    types: string[];
 }
 
 export interface PokemonEdge {
-    cursor: string
-    node: Pokemon
+    cursor: string;
+    node: Pokemon;
 }
 
 export interface PokemonsConnection {
-    edges: [PokemonEdge]
-    pageInfo: PageInfo
+    edges: PokemonEdge[];
+    pageInfo: PageInfo;
 }
+export interface PokemonsConnection {
+    edges: PokemonEdge[];
+    pageInfo: PageInfo;
+}
+

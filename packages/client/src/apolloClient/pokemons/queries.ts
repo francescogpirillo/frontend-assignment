@@ -1,6 +1,6 @@
-import { gql } from "@apollo/client";
+import { DocumentNode, gql } from "@apollo/client";
 
-export const GET_POKEMONS_BY_NAME = gql`
+export const GET_POKEMONS_BY_NAME: DocumentNode = gql`
     query Query(
     $pokemonsQ: String
     $pokemonsAfter: ID
@@ -27,7 +27,7 @@ export const GET_POKEMONS_BY_NAME = gql`
     }
 }`;
 
-export const GET_POKEMONS_BY_TYPE = gql`
+export const GET_POKEMONS_BY_TYPE: DocumentNode = gql`
     query Query(
     $pokemonsByTypeType: String!
     $pokemonsByTypeAfter: ID
@@ -54,7 +54,7 @@ export const GET_POKEMONS_BY_TYPE = gql`
     }
 }`
 
-export const GET_POKEMONS_BY_FILTERS = gql`
+export const GET_POKEMONS_BY_FILTERS: DocumentNode = gql`
     query Query(
     $pokemonsByFiltersType: String!
     $pokemonsByFiltersQ: String
@@ -83,7 +83,7 @@ export const GET_POKEMONS_BY_FILTERS = gql`
     }
 }`
 
-export const GET_POKEMON_TYPES = gql`
+export const GET_POKEMON_TYPES: DocumentNode = gql`
     query Query {
     pokemonTypes
 }`

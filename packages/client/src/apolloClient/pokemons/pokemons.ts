@@ -1,7 +1,7 @@
 import { ApolloQueryResult } from "@apollo/client";
 import client from "../apolloClient";
 import { PokemonsByNameVariables, PokemonsByTypeVariables, PokemonsByFiltersVariables } from './models/pokemonsVariables';
-import { PokemonsByNameResponse, PokemonsByTypeResponse, PokemonsByFilters } from './models/pokemonsResponse';
+import { PokemonsByNameResponse, PokemonsByTypeResponse, PokemonsByFiltersResponse, PokemonTypesResponse } from './models/pokemonsResponse';
 import { GET_POKEMONS_BY_NAME, GET_POKEMONS_BY_TYPE, GET_POKEMONS_BY_FILTERS, GET_POKEMON_TYPES } from './queries';
 
 const pokemons = {
@@ -27,7 +27,7 @@ const pokemons = {
       variables: variables,
     });
   },
-  pokemonsByFilters(type: string, name: string, after: string = '', limit?: number): Promise<ApolloQueryResult<PokemonsByFilters>> {
+  pokemonsByFilters(type: string, name: string, after: string = '', limit?: number): Promise<ApolloQueryResult<PokemonsByFiltersResponse>> {
     let variables: PokemonsByFiltersVariables = {
       pokemonsByFiltersType: type,
       pokemonsByFiltersQ: name,
@@ -39,7 +39,7 @@ const pokemons = {
       variables: variables,
     });
   },
-  pokemonTypes() {
+  pokemonTypes(): Promise<ApolloQueryResult<PokemonTypesResponse>> {
     return client.query({
       query: GET_POKEMON_TYPES
     })

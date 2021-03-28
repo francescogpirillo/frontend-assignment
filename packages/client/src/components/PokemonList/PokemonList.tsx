@@ -7,8 +7,10 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 import scss from './PokemonList.module.scss';
+import { PokemonListProps } from './models/pokemonListProps';
+import { Pokemon } from '../../shared/models/Pokemon';
 
-const PokemonList = (props: any) => {
+const PokemonList = ({ pokemonList }: PokemonListProps) => {
     return (
         <TableContainer className={scss.pokemonList} component={Paper}>
             <Table aria-label="simple table">
@@ -20,7 +22,7 @@ const PokemonList = (props: any) => {
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {props.pokemonList && props.pokemonList.map((row: any) => (
+                    {pokemonList && pokemonList.map((row: Pokemon) => (
                         <TableRow key={row.name}>
                             <TableCell align="center" component="th" scope="row">{row.name}</TableCell>
                             <TableCell align="center">{row.types}</TableCell>

@@ -4,7 +4,7 @@ import ShowMore from "../../components/ShowMore/ShowMore";
 import { Grid, CircularProgress, Snackbar } from "@material-ui/core";
 import Search from "../../components/Search/Search";
 import pokemonService from "../../apolloClient/pokemons/pokemons";
-import { Pokemon } from '../../models/Pokemon'
+import { Pokemon } from '../../shared/models/Pokemon'
 import { PokemonEdge } from "../../apolloClient/pokemons/models/pokemonsResponse";
 import { Alert } from '@material-ui/lab';
 
@@ -18,15 +18,14 @@ const Pokemons = () => {
   const [pokemonTypes, setPokemonTypes] = useState<string[]>([]);
   const [openAlert, setOpenAlert] = useState<boolean>(false);
 
-
   const fetchPokemons = async (name: string = '', showMore: boolean = false) => {
     try {
       if (!showMore) setLoadingResults(true);
       const response = await pokemonService.pokemonsByName(name);
       if (response.data) {
         const pokemons: Pokemon[] = response.data.pokemons?.edges?.map((pokemon: PokemonEdge) => {
-          const name = pokemon?.node?.name ?? '';
-          const types = pokemon?.node?.types?.join() ?? '';
+          const name = pokemon.node?.name ?? '';
+          const types = pokemon.node?.types?.join() ?? '';
           const classification = pokemon?.node?.classification ?? '';
           return new Pokemon(name, types, classification);
         });
@@ -41,15 +40,15 @@ const Pokemons = () => {
     };
   };
 
-  const fetchPokemonsByType = async (type: string, after: string = "", showMore: boolean = false,) => {
+  const fetchPokemonsByType = async (type: string, after: string = '', showMore: boolean = false,) => {
     try {
       if (!showMore) setLoadingResults(true);
       const response = await pokemonService.pokemonsByType(type, after);
       if (response.data) {
         const pokemons = response.data.pokemonsByType?.edges?.map((pokemon: PokemonEdge) => {
-          const name = pokemon?.node?.name ?? '';
-          const types = pokemon?.node?.types?.join() ?? '';
-          const classification = pokemon?.node?.classification ?? '';
+          const name = pokemon.node?.name ?? '';
+          const types = pokemon.node?.types?.join() ?? '';
+          const classification = pokemon.node?.classification ?? '';
           return new Pokemon(name, types, classification);
         });
         showMore ? setPokemonList(pokemonList.concat(pokemons)) : setPokemonList(pokemons);
@@ -69,8 +68,8 @@ const Pokemons = () => {
       const response = await pokemonService.pokemonsByFilters(type, name, after);
       if (response.data) {
         const pokemons = response.data.pokemonsByFilters?.edges?.map((pokemon: PokemonEdge) => {
-          const name: string = pokemon?.node?.name ?? '';
-          const types: string = pokemon?.node?.types?.join() ?? '';
+          const name: string = pokemon.node?.name ?? '';
+          const types: string = pokemon.node?.types?.join() ?? '';
           const classification: string = pokemon?.node?.classification ?? '';
           return new Pokemon(name, types, classification);
         });
@@ -84,21 +83,20 @@ const Pokemons = () => {
     };
   };
 
-
   useEffect(() => {
     fetchPokemons();
   }, [])
 
   useEffect(() => {
-    pokemonService.pokemonTypes().then((data: any) => {
-      setPokemonTypes(data?.data?.pokemonTypes);
+    pokemonService.pokemonTypes().then((response) => {
+      setPokemonTypes(response.data?.pokemonTypes);
     })
   }, [])
 
   const onSearchHandler = (
     name: string,
     type: string,
-    after: string = "",
+    after: string = '',
     showMore: boolean = false
   ) => {
 
@@ -107,11 +105,11 @@ const Pokemons = () => {
       setType(type);
     }
 
-    if (!type || type === "") {
+    if (!type || type === '') {
       fetchPokemons(name, showMore);
-    } else if (type && type !== "" && (!name || name === "")) {
+    } else if (type && type !== '' && (!name || name === '')) {
       fetchPokemonsByType(type, after, showMore);
-    } else if (type && type !== "" && name && name !== "") {
+    } else if (type && type !== '' && name && name !== '') {
       fetchPokemonsByFilters(type, name, after, showMore);
     }
   };
@@ -135,17 +133,17 @@ const Pokemons = () => {
   return (
     <>
       {errorAlert}
-      <Grid container alignItems="flex-start" justify="flex-start" spacing={2}>
-        <Grid container item xs={12} md={3}>
-          <Search onSearch={onSearchHandler} pokemonTypes={pokemonTypes} />
-        </Grid>
-        <Grid item xs={12} md={9}>
-          <Grid item>
-            {loadingResults ? <CircularProgress /> : <PokemonList pokemonList={pokemonList} />}
-            {!loadingResults && hasNextPage ? (
-              <ShowMore showMoreClicked={onShowMoreHandler} />
-            ) : <></>}
-          </Grid>
+      <Grid container item xs={12} md={3}>
+        <Search onSearch={onSearchHandler} pokemonTypes={pokemonTypes} />
+      </Grid>
+      <Grid item xs={12} md={9}>
+        <Grid item>
+          {loadingResults ?
+            <CircularProgress />
+            : <PokemonList pokemonList={pokemonList} />}
+          {!loadingResults && hasNextPage ? (
+            <ShowMore showMoreClicked={onShowMoreHandler} />
+          ) : <></>}
         </Grid>
       </Grid>
     </>
