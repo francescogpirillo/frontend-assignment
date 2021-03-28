@@ -141,9 +141,9 @@ const Pokemons = () => {
           {loadingResults ?
             <CircularProgress />
             : <PokemonList pokemonList={pokemonList} />}
-          {!loadingResults && hasNextPage ? (
+          {!loadingResults && hasNextPage ?
             <ShowMore showMoreClicked={onShowMoreHandler} />
-          ) : <></>}
+            : <></>}
         </Grid>
       </Grid>
     </>
