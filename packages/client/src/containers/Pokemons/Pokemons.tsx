@@ -11,6 +11,7 @@ import { Alert } from '@material-ui/lab';
 import { nanoid } from "nanoid";
 
 const Pokemons = () => {
+  const fetchLimit: number = 8;
   const [pokemonList, setPokemonList] = useState<Pokemon[]>([]);
   const [hasNextPage, setHasNextPage] = useState<boolean>(false);
   const [endCursor, setEndCursor] = useState<string>('');
@@ -20,10 +21,10 @@ const Pokemons = () => {
   const [pokemonTypes, setPokemonTypes] = useState<string[]>([]);
   const [openAlert, setOpenAlert] = useState<boolean>(false);
 
-  const fetchPokemons = async (name: string = '', after: string = '', showMore: boolean = false) => {
+  const fetchPokemons = async (name: string = '', after: string = '', showMore: boolean = false, limit: number = fetchLimit) => {
     try {
       if (!showMore) setLoadingResults(true);
-      const response = await pokemonService.pokemonsByName(name, after);
+      const response = await pokemonService.pokemonsByName(name, after, limit);
       if (response.data) {
         const pokemons: Pokemon[] = response.data.pokemons?.edges?.map((pokemon: PokemonEdge) => {
           const id = pokemon.node?.id ?? nanoid();
@@ -43,10 +44,10 @@ const Pokemons = () => {
     };
   };
 
-  const fetchPokemonsByType = async (type: string, after: string = '', showMore: boolean = false,) => {
+  const fetchPokemonsByType = async (type: string, after: string = '', showMore: boolean = false, limit: number = fetchLimit) => {
     try {
       if (!showMore) setLoadingResults(true);
-      const response = await pokemonService.pokemonsByType(type, after);
+      const response = await pokemonService.pokemonsByType(type, after, limit);
       if (response.data) {
         const pokemons = response.data.pokemonsByType?.edges?.map((pokemon: PokemonEdge) => {
           const id = pokemon.node?.id ?? nanoid();
@@ -66,10 +67,10 @@ const Pokemons = () => {
     };
   };
 
-  const fetchPokemonsByFilters = async (type: string, name: string, after: string = '', showMore: boolean = false) => {
+  const fetchPokemonsByFilters = async (type: string, name: string, after: string = '', showMore: boolean = false, limit: number = fetchLimit) => {
     try {
       setLoadingResults(true);
-      const response = await pokemonService.pokemonsByFilters(type, name, after);
+      const response = await pokemonService.pokemonsByFilters(type, name, after, limit);
       if (response.data) {
         const pokemons = response.data.pokemonsByFilters?.edges?.map((pokemon: PokemonEdge) => {
           const id = pokemon.node?.id ?? nanoid();
@@ -139,10 +140,10 @@ const Pokemons = () => {
     <>
       {errorAlert}
       <Scroll showBelow={250} />
-      <Grid container item xs={12} md={3}>
+      <Grid container item xs={12} sm={3}>
         <Search onSearch={onSearchHandler} pokemonTypes={pokemonTypes} />
       </Grid>
-      <Grid item xs={12} md={9}>
+      <Grid item xs={12} sm={9}>
         <Grid item>
           {loadingResults ?
             <CircularProgress />
