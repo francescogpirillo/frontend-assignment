@@ -79,7 +79,6 @@ const Search = ({ pokemonTypes, onSearch }: SearchProps) => {
                 </Grid>
             </Form>
         </div >
-        // </Grid>
     )
 }
 
