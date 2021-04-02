@@ -69,7 +69,7 @@ const Pokemons = () => {
 
   const fetchPokemonsByFilters = async (type: string, name: string, after: string = '', showMore: boolean = false, limit: number = fetchLimit) => {
     try {
-      setLoadingResults(true);
+      if (!showMore) setLoadingResults(true);
       const response = await pokemonService.pokemonsByFilters(type, name, after, limit);
       if (response.data) {
         const pokemons = response.data.pokemonsByFilters?.edges?.map((pokemon: PokemonEdge) => {
@@ -79,7 +79,8 @@ const Pokemons = () => {
           const classification: string = pokemon?.node?.classification ?? '';
           return new Pokemon(id, name, types, classification);
         });
-        showMore ? setPokemonList(pokemonList.concat(pokemons)) : setPokemonList(pokemons); setHasNextPage(response.data.pokemonsByFilters?.pageInfo?.hasNextPage);
+        showMore ? setPokemonList(pokemonList.concat(pokemons)) : setPokemonList(pokemons);
+        setHasNextPage(response.data.pokemonsByFilters?.pageInfo?.hasNextPage);
         setEndCursor(response.data.pokemonsByFilters?.pageInfo?.endCursor);
       }
     } catch (err) {

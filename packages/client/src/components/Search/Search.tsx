@@ -49,7 +49,8 @@ const Search = ({ pokemonTypes, onSearch }: SearchProps) => {
                     <Grid item xs={12}>
                         <TextField className={scss.name}
                             id="standard-basic"
-                            name="name" label="Name"
+                            name="name"
+                            label="Name"
                             value={values.name}
                             onChange={handleInputChange}
                             {...(errors.name && { error: true, helperText: errors.name })}
