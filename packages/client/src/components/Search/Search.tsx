@@ -43,7 +43,7 @@ const Search = ({ pokemonTypes, onSearch }: SearchProps) => {
     }
 
     return (
-        <div className={scss.search} >
+        <div className={scss.search}>
             <Form onSubmit={handleSubmit}>
                 <Grid className={scss.filters} container>
                     <Grid item xs={12}>
@@ -78,7 +78,7 @@ const Search = ({ pokemonTypes, onSearch }: SearchProps) => {
                     </Grid>
                 </Grid>
             </Form>
-        </div >
+        </div>
     )
 }
 
